@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <title>LyricPilot</title>
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="#284D42"/>
+  <path d="M33 37H94M33 59H70M33 81H47" stroke="#D6E7BB" stroke-width="10" stroke-linecap="round"/>
+  <path d="M66 82L101 65L86 103L80 88L66 82Z" fill="#F5F8ED" stroke="#F5F8ED" stroke-width="3" stroke-linejoin="round"/>
+</svg>

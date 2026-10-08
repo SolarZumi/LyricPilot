@@ -1,0 +1,101 @@
+<div id="lyricpilot" data-initializing>
+  <div class="stage" data-phase="ready">
+    <div class="page-input-shield" hidden aria-hidden="true"></div>
+    <div class="cursor-hint" aria-hidden="true"><div class="cursor-card"><div class="cursor-label"><i data-lucide="lyricpilot"></i><span>自动对齐</span></div><div class="cursor-detail"><div><span>自动对齐中无法操作</span></div></div></div></div>
+    <div class="pick-banner" inert aria-hidden="true"><span data-pick-title>选择播放按钮</span><button type="button" class="icon-button" data-action="cancel-pick" aria-label="取消选择"><i data-lucide="x" aria-hidden="true"></i></button></div>
+    <div class="panel-shell">
+    <section class="panel" data-phase="ready" aria-label="LyricPilot">
+      <button type="button" class="panel-drag" aria-label="移动面板" aria-description="拖动或按方向键移动面板" title="拖动面板"></button>
+      <div class="brand"><i data-lucide="lyricpilot" aria-hidden="true"></i><span class="brand-copy"><span class="brand-name">LyricPilot</span><span class="brand-status sweep-text" aria-hidden="true">LyricPilot</span></span></div>
+      <button type="button" class="icon-button panel-toggle cursor-interaction" data-action="toggle-panel" aria-label="收起面板" aria-expanded="true" aria-controls="lp-panel-content"><span class="toggle-glyph toggle-in" aria-hidden="true"><i data-lucide="minimize-2" aria-hidden="true"></i></span><span class="toggle-glyph toggle-out" aria-hidden="true"><i data-lucide="maximize-2" aria-hidden="true"></i></span></button>
+      <div class="panel-full" id="lp-panel-content">
+      <header class="panel-head">
+        <div class="head-tools">
+          <button type="button" class="icon-button cursor-interaction" data-action="more" aria-label="更多设置" aria-expanded="false"><i data-lucide="ellipsis" aria-hidden="true"></i></button>
+        </div>
+      </header>
+      <div class="file-head">
+        <div class="file-name">明日こそ</div>
+        <div class="file-actions">
+          <button type="button" class="icon-button cursor-interaction" data-action="clear-file" aria-label="移除歌词"><i data-lucide="x" aria-hidden="true"></i></button>
+          <span class="count" hidden>3 / 12</span>
+        </div>
+      </div>
+      <div class="lyrics-body">
+      <div class="drop-area" inert aria-hidden="true">
+        <label class="drop-upload cursor-interaction">
+          <div class="drop-content"><i data-lucide="file-music" aria-hidden="true"></i><span class="drop-title">导入带时间的歌词</span><span class="drop-hint">点击选择或拖入文件</span><span class="drop-hint">LRC / TSV / SRT / VTT / TXT</span></div>
+          <input type="file" aria-label="导入带时间标记的歌词文件" accept=".lrc,.tsv,.srt,.vtt,.txt">
+        </label>
+        <button type="button" class="format-link cursor-interaction" data-action="open-formats">格式示例<i data-lucide="chevron-right" aria-hidden="true"></i></button>
+      </div>
+      <div class="lyric-viewport" aria-label="歌词浏览"><ol class="lyric-list"></ol></div>
+      </div>
+      <div class="message" role="alert" hidden></div>
+      <div class="settings-wrap"><div class="settings-inner"><div class="setup">
+        <div class="play-row"><span class="label">播放按钮</span><div class="target-value" data-target="play"></div></div>
+        <div class="mark-heading">标记方式</div>
+        <div class="segment" data-group="input" data-value="left" role="group" aria-label="标记方式">
+          <button type="button" data-value="button" class="cursor-interaction" aria-pressed="true">网页按钮</button>
+          <button type="button" data-value="space" class="cursor-interaction" aria-pressed="false">空格键</button>
+          <button type="button" data-value="custom" class="cursor-interaction" aria-pressed="false">自定义按键</button>
+        </div>
+        <div class="segment" data-group="duration" data-value="left" role="group" aria-label="按键时长">
+          <button type="button" data-value="tap" class="cursor-interaction" aria-pressed="true">单击</button>
+          <button type="button" data-value="hold" class="cursor-interaction" aria-pressed="false">按住</button>
+        </div>
+        <div class="duration-wrap fold"><div><p class="duration-note" id="lp-hold-reason" role="status"></p></div></div>
+        <div class="target-collapse"><div>
+          <div class="target-row marker-row is-active"><span class="label">标记按钮</span><div class="target-value" data-target="mark"></div></div>
+          <div class="target-row key-row" inert aria-hidden="true"><span class="label" data-key-hint>标记按键</span><div class="target-value">
+            <button type="button" class="record-key cursor-interaction" data-action="record-key" aria-pressed="false" aria-label="录入自定义按键"><i data-lucide="keyboard" aria-hidden="true"></i><span class="key-label">点击录入</span></button>
+            <button type="button" class="icon-button cursor-interaction" data-action="clear-key" aria-label="清除自定义按键" hidden><i data-lucide="x" aria-hidden="true"></i></button>
+          </div></div>
+        </div></div>
+      </div></div></div>
+      <div class="run-wrap fold"><div><div class="run-status" role="status"><span class="sweep-text" data-status>正在对齐</span></div></div></div>
+      <footer class="footer">
+        <div class="stop-slot" inert><div><button type="button" class="secondary cursor-interaction" data-action="stop">结束</button></div></div>
+        <button type="button" class="primary cursor-interaction" data-action="primary">开始对齐</button>
+      </footer>
+      <div class="more-popover motion-layer" inert aria-hidden="true">
+        <div class="popover-header"><span>时间偏移</span><span class="label">秒</span></div>
+        <div class="offset-stepper">
+          <button type="button" class="icon-button cursor-interaction" data-action="offset-minus" aria-label="提前0.1秒"><i data-lucide="minus" aria-hidden="true"></i></button>
+          <input type="number" step="0.1" min="-10" max="10" value="0.0" aria-label="时间偏移（秒）">
+          <button type="button" class="icon-button cursor-interaction" data-action="offset-plus" aria-label="延后0.1秒"><i data-lucide="plus" aria-hidden="true"></i></button>
+        </div>
+        <div class="offset-note">负数提前，正数延后</div>
+        <div class="appearance-settings">
+          <div class="popover-header"><span>外观</span></div>
+          <div class="segment" data-group="appearance" role="group" aria-label="外观模式">
+            <button type="button" class="cursor-interaction" data-value="system" aria-pressed="true">跟随系统</button>
+            <button type="button" class="cursor-interaction" data-value="light" aria-pressed="false">浅色</button>
+            <button type="button" class="cursor-interaction" data-value="dark" aria-pressed="false">深色</button>
+          </div>
+          <div class="palette-row"><span class="label">配色</span><div class="palette-options" role="group" aria-label="配色">
+            <button type="button" class="palette-button cursor-interaction" data-palette-choice="green" aria-label="绿色" aria-pressed="true"></button>
+            <button type="button" class="palette-button cursor-interaction" data-palette-choice="blue" aria-label="蓝色" aria-pressed="false"></button>
+            <button type="button" class="palette-button cursor-interaction" data-palette-choice="purple" aria-label="紫色" aria-pressed="false"></button>
+            <button type="button" class="palette-button cursor-interaction" data-palette-choice="orange" aria-label="橙色" aria-pressed="false"></button>
+          </div></div>
+        </div>
+        <div class="exit-section"><button type="button" class="exit-extension cursor-interaction" data-action="close-extension"><i data-lucide="log-out" aria-hidden="true"></i><span>退出</span></button></div>
+      </div>
+      <section class="format-sheet motion-layer" aria-label="歌词文件格式示例" inert aria-hidden="true">
+        <div class="format-header"><span>格式示例</span><button type="button" class="icon-button cursor-interaction" data-action="close-formats" aria-label="关闭格式示例"><i data-lucide="x" aria-hidden="true"></i></button></div>
+        <div class="format-tabs" role="tablist" aria-label="歌词文件格式">
+          <button type="button" class="cursor-interaction" role="tab" id="lp-example-lrc" aria-controls="lp-format-content" aria-selected="true" data-format="lrc">LRC</button>
+          <button type="button" class="cursor-interaction" role="tab" id="lp-example-tsv" aria-controls="lp-format-content" aria-selected="false" data-format="tsv">TSV</button>
+          <button type="button" class="cursor-interaction" role="tab" id="lp-example-srt" aria-controls="lp-format-content" aria-selected="false" data-format="srt">SRT</button>
+          <button type="button" class="cursor-interaction" role="tab" id="lp-example-vtt" aria-controls="lp-format-content" aria-selected="false" data-format="vtt">VTT</button>
+          <button type="button" class="cursor-interaction" role="tab" id="lp-example-txt" aria-controls="lp-format-content" aria-selected="false" data-format="txt">TXT</button>
+        </div>
+        <div id="lp-format-content" role="tabpanel" aria-labelledby="lp-example-lrc"><pre class="format-code"></pre><p class="format-note"></p></div>
+      </section>
+
+      </div>
+    </section>
+    </div>
+  </div>
+</div>

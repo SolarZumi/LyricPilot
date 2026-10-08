@@ -1,0 +1,251 @@
+#lyricpilot {
+  --lp-ease: cubic-bezier(.22,.72,.22,1);
+  --lp-motion: 280ms;
+  --lp-sweep-base: light-dark(#343d2d, #88927e);
+  --lp-sweep-light: light-dark(#b7c6a9, #ffffff);
+  --lp-morph: 460ms;
+  --lp-paper: light-dark(#fcfcfa, #20221f);
+  --lp-ink: light-dark(#252922, #eef0e9);
+  --lp-secondary: light-dark(#697061, #b0b6aa);
+  --lp-faint: light-dark(#707767, #a0a995);
+  --lp-line: light-dark(#e7e9e2, #393e34);
+  --lp-tray: light-dark(#f2f4ee, #292d25);
+  --lp-hover: light-dark(#e8ece2, #353c2d);
+  --lp-accent: light-dark(#475c38, #bbd3a3);
+  --lp-accent-text: light-dark(#f8faf4, #202b17);
+  --lp-tint: light-dark(#e9f0df, #33402a);
+  --lp-shadow: light-dark(#27331a16, #00000055);
+  --lp-error: light-dark(#a03a30, #ffb0a8);
+  --lp-site: light-dark(#f7f8f5, #1c1f1b);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Hiragino Sans", "Noto Sans", sans-serif;
+  color: var(--lp-ink); font-size: 14px; line-height: 1.5;
+  width: 100%; position: relative;
+}
+#lyricpilot[data-theme="light"] { color-scheme: light; }
+#lyricpilot[data-theme="dark"] { color-scheme: dark; }
+#lyricpilot[data-palette="blue"] { --lp-accent: light-dark(#355e96,#a5c7f2); --lp-accent-text: light-dark(#f7faff,#14273f); --lp-tint: light-dark(#e5eefb,#293a50); --lp-shine: light-dark(#8aafe3,#ffffff); }
+#lyricpilot[data-palette="purple"] { --lp-accent: light-dark(#705091,#d4b6ee); --lp-accent-text: light-dark(#fcf8ff,#30213f); --lp-tint: light-dark(#f0e8f8,#40304d); --lp-shine: light-dark(#c6a0e8,#ffffff); }
+#lyricpilot[data-palette="orange"] { --lp-accent: light-dark(#92512c,#efbb8e); --lp-accent-text: light-dark(#fffaf5,#392512); --lp-tint: light-dark(#faecde,#493724); --lp-shine: light-dark(#dba87f,#ffffff); }
+#lyricpilot * { box-sizing: border-box; transition: background-color var(--lp-motion) ease, color var(--lp-motion) ease, border-color var(--lp-motion) ease, box-shadow var(--lp-motion) ease; }
+#lyricpilot button, #lyricpilot input { font: inherit; }
+#lyricpilot button { -webkit-tap-highlight-color: transparent; }
+#lyricpilot [hidden] { display: none !important; }
+#lyricpilot button:disabled { cursor: not-allowed; }
+#lyricpilot .stage { position: relative; height: 712px; overflow: hidden; isolation: isolate; border: 1px solid var(--lp-line); border-radius: 18px; background: var(--lp-site); }
+#lyricpilot .panel-shell { width: min(var(--lp-width, 376px),calc(100% - 40px)); height: 664px; position: absolute; top: 22px; right: 20px; z-index: 6; pointer-events: none; opacity: 1; visibility: visible; transition: left var(--lp-morph) var(--lp-ease), top var(--lp-morph) var(--lp-ease), opacity 220ms, visibility 0s; }
+#lyricpilot .panel-shell.is-closed { opacity: 0; visibility: hidden; transition: opacity 220ms, visibility 0s 220ms; }
+#lyricpilot .panel-shell .panel { pointer-events: auto; }
+#lyricpilot .panel { position: absolute; top: 0; right: 0; width: 100%; height: 664px; border: 1px solid var(--lp-line); background: var(--lp-paper); border-radius: 20px; box-shadow: 0 14px 40px -14px var(--lp-shadow), 0 3px 8px -4px var(--lp-shadow); overflow: clip; isolation: isolate; transition: width var(--lp-morph) var(--lp-ease), height var(--lp-morph) var(--lp-ease), border-radius var(--lp-morph) var(--lp-ease), background-color var(--lp-motion), border-color var(--lp-motion), box-shadow var(--lp-motion); }
+#lyricpilot .panel.is-mini { width: min(232px,100%); height: 64px; border-radius: 16px; }
+#lyricpilot .panel-full { position: absolute; top: 0; right: 0; width: calc(var(--lp-expanded-width,376px) - 2px); height: 662px; display: flex; flex-direction: column; opacity: 1; visibility: visible; transition: opacity 220ms ease 120ms, visibility 0s; }
+#lyricpilot .is-mini .panel-full { opacity: 0; visibility: hidden; transition: opacity 140ms ease, visibility 0s 140ms; }
+#lyricpilot .sweep-text { display: inline-block; width: fit-content; max-width: 100%; }
+/* At both endpoints the entire highlight, including its soft edges, is outside the text. */
+#lyricpilot [data-phase="running"] .sweep-text { background: linear-gradient(105deg,var(--lp-sweep-base) 40%,var(--lp-sweep-light) 50%,var(--lp-sweep-base) 60%); background-size: 300% 100%; background-position: 100% 0; background-repeat: no-repeat; background-clip: text; -webkit-background-clip: text; color: transparent; animation: lp-sweep 2s linear infinite; }
+@keyframes lp-sweep { 0%,8% { background-position: 100% 0; } 84%,100% { background-position: 0% 0; } }
+#lyricpilot .panel-head { height: 62px; padding: 0 54px 0 24px; display: flex; align-items: center; justify-content: flex-end; flex-shrink: 0; }
+#lyricpilot .brand { position: absolute; left: 24px; top: 0; height: 62px; z-index: 3; display: flex; gap: 10px; align-items: center; font-size: 14px; font-weight: 500; letter-spacing: .02em; pointer-events: none; transition: left var(--lp-morph) var(--lp-ease); }
+#lyricpilot .is-mini .brand { left: 17px; }
+#lyricpilot .brand > svg { width: 19px; height: 19px; stroke-width: 1.65; color: var(--lp-accent); }
+#lyricpilot .brand-copy { display: grid; white-space: nowrap; }
+#lyricpilot .brand-copy > span { grid-area: 1 / 1; width: fit-content; transition: opacity 200ms ease 60ms; }
+#lyricpilot .brand-name { opacity: 1; }
+#lyricpilot .brand-status { opacity: 0; }
+#lyricpilot .is-mini .brand-name { opacity: 0; }
+#lyricpilot .is-mini .brand-status { opacity: 1; }
+#lyricpilot .head-tools { display: flex; align-items: center; gap: 2px; }
+#lyricpilot .icon-button { width: 32px; height: 32px; padding: 7px; border: 0; border-radius: 8px; background: transparent; color: var(--lp-secondary); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+#lyricpilot .icon-button:hover, #lyricpilot .icon-button[data-action="more"][aria-expanded="true"] { background: var(--lp-tray); color: var(--lp-ink); }
+#lyricpilot .icon-button svg { width: 16px; height: 16px; stroke-width: 1.6; }
+#lyricpilot .icon-button:disabled { opacity: .35; }
+#lyricpilot .icon-button:active { transform: scale(.94); }
+#lyricpilot .panel-toggle { position: absolute; top: 15px; right: 18px; z-index: 7; display: grid; place-items: center; }
+#lyricpilot .panel-toggle:active { transform: none; }
+#lyricpilot .toggle-glyph { grid-area: 1 / 1; display: flex; width: 16px; height: 16px; transition: opacity 180ms ease, transform 180ms var(--lp-ease); }
+#lyricpilot .toggle-in { opacity: 1; transform: scale(1); }
+#lyricpilot .toggle-out { opacity: 0; transform: scale(.82); }
+#lyricpilot .is-mini .toggle-in { opacity: 0; transform: scale(.82); }
+#lyricpilot .is-mini .toggle-out { opacity: 1; transform: scale(1); }
+#lyricpilot .file-head { display: flex; gap: 12px; align-items: center; justify-content: space-between; min-height: 52px; padding: 0 24px 5px; flex-shrink: 0; }
+#lyricpilot .file-name { font-size: 19px; font-weight: 600; letter-spacing: -.035em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#lyricpilot .file-actions { min-width: 40px; display: flex; justify-content: flex-end; align-items: center; }
+#lyricpilot .count { font-size: 12px; color: var(--lp-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+#lyricpilot .lyrics-body { flex: 1; min-height: 0; position: relative; }
+#lyricpilot .lyric-viewport { position: absolute; inset: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--lp-line) transparent; overscroll-behavior: contain; mask-image: linear-gradient(to bottom, transparent, #000 22px, #000 calc(100% - 28px), transparent); }
+#lyricpilot .lyrics-body > .drop-area, #lyricpilot .lyrics-body > .lyric-viewport { opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity 180ms ease, transform var(--lp-motion) var(--lp-ease), visibility 0s var(--lp-motion), background-color var(--lp-motion), border-color var(--lp-motion); }
+#lyricpilot .lyrics-body > .is-active { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+#lyricpilot .lyric-list { margin: 0; padding: 12px 24px 24px; list-style: none; position: relative; }
+#lyricpilot .lyric-list li { padding: 9px 0; font-size: 16px; line-height: 1.75; color: var(--lp-secondary); font-weight: 400; overflow-wrap: anywhere; transition: color .32s ease, opacity .32s ease; }
+#lyricpilot .lyric-time { display: block; margin-bottom: 3px; color: var(--lp-secondary); font-size: 11px; line-height: 1.5; font-weight: 400; font-variant-numeric: tabular-nums; letter-spacing: .015em; }
+#lyricpilot .lyric-text { display: block; white-space: pre-line; }
+#lyricpilot .panel[data-phase="running"] .lyric-list, #lyricpilot .panel[data-phase="paused"] .lyric-list, #lyricpilot .panel[data-phase="done"] .lyric-list { padding-top: 140px; padding-bottom: 160px; }
+#lyricpilot .panel[data-phase="running"] .lyric-list li, #lyricpilot .panel[data-phase="paused"] .lyric-list li, #lyricpilot .panel[data-phase="done"] .lyric-list li { color: var(--lp-faint); }
+#lyricpilot .panel .lyric-list li.is-current { color: var(--lp-ink); font-weight: 600; }
+#lyricpilot .drop-area { position: absolute; inset: 0; min-height: 0; margin: 0 24px 20px; padding: 12px 16px; border: 1px dashed var(--lp-line); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; }
+#lyricpilot .drop-area:hover, #lyricpilot .drop-area.dragging { background: var(--lp-tray); border-color: var(--lp-accent); }
+#lyricpilot .drop-upload { display: grid; place-items: center; position: relative; width: 100%; flex: 1; min-height: 0; }
+#lyricpilot .drop-content { display: grid; justify-items: center; gap: 6px; padding: 0; }
+#lyricpilot .drop-content > svg { width: 28px; height: 28px; stroke-width: 1.25; color: var(--lp-accent); margin-bottom: 4px; }
+#lyricpilot .drop-title { font-weight: 500; }
+#lyricpilot .drop-hint { font-size: 12px; color: var(--lp-secondary); }
+#lyricpilot .drop-area input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
+#lyricpilot .format-link { border: 0; background: transparent; color: var(--lp-accent); padding: 3px 8px; display: inline-flex; align-items: center; gap: 3px; font-size: 12px; flex-shrink: 0; border-radius: 5px; }
+#lyricpilot .format-link:hover { background: var(--lp-tint); }
+#lyricpilot .format-link svg { width: 13px; height: 13px; }
+#lyricpilot .settings-wrap { display: grid; grid-template-rows: 1fr; opacity: 1; transition: grid-template-rows var(--lp-motion) var(--lp-ease), opacity var(--lp-motion) ease; flex-shrink: 0; }
+#lyricpilot .settings-wrap.collapsed { grid-template-rows: 0fr; }
+#lyricpilot .settings-wrap.collapsed { opacity: 0; }
+#lyricpilot .settings-inner { min-height: 0; overflow: hidden; }
+#lyricpilot .setup { padding: 8px 24px 0; }
+#lyricpilot .play-row, #lyricpilot .target-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 50px; }
+#lyricpilot .play-row { border-top: 1px solid var(--lp-line); border-bottom: 1px solid var(--lp-line); }
+#lyricpilot .label { color: var(--lp-secondary); font-size: 12px; flex-shrink: 0; }
+#lyricpilot .target-value { display: flex; align-items: center; justify-content: flex-end; min-width: 0; gap: 6px; }
+#lyricpilot .target-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 170px; font-size: 13px; }
+#lyricpilot .target-check { width: 14px; height: 14px; color: var(--lp-accent); }
+#lyricpilot .target-value .icon-button { width: 24px; height: 28px; padding: 5px; }
+#lyricpilot .select-target { display: flex; align-items: center; gap: 6px; border: 0; background: transparent; color: var(--lp-accent); padding: 7px 0 7px 9px; font-weight: 500; font-size: 13px; }
+#lyricpilot .select-target svg { width: 15px; height: 15px; }
+#lyricpilot .mark-heading { padding: 16px 0 10px; color: var(--lp-secondary); font-size: 12px; }
+#lyricpilot .segment { --segments: 2; --selected: 0; position: relative; display: grid; grid-template-columns: repeat(var(--segments), minmax(0, 1fr)); padding: 3px; border-radius: 9px; background: var(--lp-tray); isolation: isolate; }
+#lyricpilot .segment[data-group="input"] { --segments: 3; }
+#lyricpilot .segment + .segment { margin-top: 7px; }
+#lyricpilot .segment::before { content: ""; position: absolute; top: 3px; left: 3px; bottom: 3px; width: calc((100% - 6px) / var(--segments)); border-radius: 6px; background: var(--lp-paper); box-shadow: 0 1px 3px var(--lp-shadow); z-index: -1; transform: translateX(calc(var(--selected) * 100%)); transition: transform var(--lp-motion) var(--lp-ease), background-color var(--lp-motion), box-shadow var(--lp-motion); }
+#lyricpilot .segment button { height: 32px; min-width: 0; border: 0; background: transparent; color: var(--lp-secondary); border-radius: 6px; padding: 0 4px; font-size: 13px; white-space: nowrap; }
+#lyricpilot .segment button[aria-pressed="true"] { color: var(--lp-ink); font-weight: 500; }
+#lyricpilot .segment button:disabled { color: var(--lp-faint); opacity: .65; }
+#lyricpilot .duration-note { margin: 8px 0 0; color: var(--lp-secondary); font-size: 12px; line-height: 1.6; }
+#lyricpilot .fold { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows var(--lp-motion) var(--lp-ease), opacity var(--lp-motion) ease; flex-shrink: 0; }
+#lyricpilot .fold.is-open { grid-template-rows: 1fr; opacity: 1; }
+#lyricpilot .fold > div { min-height: 0; overflow: hidden; }
+#lyricpilot .target-collapse { display: grid; grid-template-rows: 1fr; opacity: 1; transition: grid-template-rows var(--lp-motion) var(--lp-ease), opacity var(--lp-motion) ease; }
+#lyricpilot .target-collapse.closed { grid-template-rows: 0fr; opacity: 0; }
+#lyricpilot .target-collapse > div { display: grid; min-height: 0; overflow: hidden; }
+#lyricpilot .target-row { grid-area: 1 / 1; opacity: 0; visibility: hidden; transition: opacity 180ms ease, visibility 0s 180ms; }
+#lyricpilot .target-row.is-active { opacity: 1; visibility: visible; transition-delay: 0s; }
+#lyricpilot .record-key { max-width: 218px; display: flex; align-items: center; justify-content: flex-end; gap: 7px; border: 0; border-radius: 7px; background: transparent; color: var(--lp-accent); padding: 6px 8px; min-height: 32px; font-size: 13px; }
+#lyricpilot .record-key:hover { background: var(--lp-tray); }
+#lyricpilot .record-key[aria-pressed="true"] { background: var(--lp-tint); box-shadow: inset 0 0 0 1px var(--lp-accent); }
+#lyricpilot .record-key svg { width: 16px; height: 16px; flex-shrink: 0; }
+#lyricpilot .record-key span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#lyricpilot .key-label { display: flex; align-items: center; gap: 4px; }
+#lyricpilot kbd { background: var(--lp-tray); color: var(--lp-ink); font: 12px/1.5 -apple-system,BlinkMacSystemFont,sans-serif; border: 1px solid var(--lp-line); border-radius: 4px; padding: 1px 5px; box-shadow: 0 1px 0 var(--lp-line); }
+#lyricpilot .format-sheet { position: absolute; inset: 62px 0 0; z-index: 4; background: var(--lp-paper); padding: 12px 24px 24px; display: flex; flex-direction: column; }
+#lyricpilot .format-header { display: flex; justify-content: space-between; align-items: center; min-height: 40px; font-size: 17px; font-weight: 600; margin-bottom: 18px; }
+#lyricpilot .format-tabs { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); border-bottom: 1px solid var(--lp-line); }
+#lyricpilot .format-tabs button { padding: 10px 2px; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; background: transparent; color: var(--lp-secondary); font-size: 12px; }
+#lyricpilot .format-tabs button[aria-selected="true"] { border-bottom-color: var(--lp-accent); color: var(--lp-ink); font-weight: 600; }
+#lyricpilot .format-code { min-height: 214px; background: var(--lp-tray); border-radius: 10px; padding: 16px 12px; margin: 20px 0 14px; white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 8; color: var(--lp-ink); font: 12px/1.9 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
+#lyricpilot .format-note { color: var(--lp-secondary); font-size: 13px; line-height: 1.7; margin: 0; }
+@keyframes lp-sheet { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: translateX(0); } }
+#lyricpilot .footer { padding: 18px 24px 22px; display: flex; flex-shrink: 0; align-items: center; }
+#lyricpilot .stop-slot { display: grid; grid-template-columns: 0fr; opacity: 0; transition: grid-template-columns var(--lp-motion) var(--lp-ease), opacity var(--lp-motion); }
+#lyricpilot .stop-slot.is-open { grid-template-columns: 1fr; opacity: 1; }
+#lyricpilot .stop-slot > div { min-width: 0; overflow: hidden; }
+#lyricpilot .stop-slot .secondary { width: 72px; margin-right: 10px; white-space: nowrap; }
+#lyricpilot .primary, #lyricpilot .secondary { border: 0; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background-color var(--lp-motion) ease, color var(--lp-motion) ease, transform .12s ease; font-size: 14px; font-weight: 500; }
+#lyricpilot .primary { flex: 1; background: var(--lp-accent); color: var(--lp-accent-text); }
+#lyricpilot .primary svg, #lyricpilot .secondary svg { width: 16px; height: 16px; stroke-width: 1.75; }
+#lyricpilot .primary:disabled { color: var(--lp-faint); background: var(--lp-tray); }
+#lyricpilot .primary:not(:disabled):active, #lyricpilot .secondary:active { transform: translateY(1px); }
+#lyricpilot .secondary { padding: 0 17px; color: var(--lp-secondary); background: var(--lp-tray); }
+#lyricpilot .run-status { padding: 8px 24px 0; min-height: 32px; font-size: 12px; color: var(--lp-secondary); display: flex; align-items: center; gap: 12px; }
+#lyricpilot [data-status] { font-weight: 500; }
+#lyricpilot .message { color: var(--lp-error); font-size: 12px; padding: 4px 24px; }
+#lyricpilot .more-popover { position: absolute; z-index: 5; top: 55px; right: 17px; width: 272px; max-width: calc(100% - 34px); border: 1px solid var(--lp-line); border-radius: 12px; background: var(--lp-paper); box-shadow: 0 10px 28px var(--lp-shadow); padding: 16px; transform-origin: top right; }
+#lyricpilot .motion-layer { opacity: 0; visibility: hidden; transform: translateY(-6px) scale(.98); transition: opacity 180ms, transform var(--lp-motion) var(--lp-ease), visibility 0s var(--lp-motion), background-color var(--lp-motion), border-color var(--lp-motion), box-shadow var(--lp-motion); }
+#lyricpilot .format-sheet.motion-layer { transform: translateX(16px); }
+#lyricpilot .motion-layer.is-open { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+#lyricpilot .appearance-settings { border-top: 1px solid var(--lp-line); margin-top: 16px; padding-top: 16px; }
+#lyricpilot .exit-section { border-top: 1px solid var(--lp-line); margin-top: 16px; padding-top: 8px; }
+#lyricpilot .exit-extension { width: 100%; border: 0; border-radius: 7px; background: transparent; color: var(--lp-secondary); padding: 9px 8px; display: flex; align-items: center; gap: 9px; text-align: left; font-size: 13px; }
+#lyricpilot .exit-extension:hover { color: var(--lp-ink); background: var(--lp-tray); }
+#lyricpilot .exit-extension svg { width: 16px; height: 16px; }
+#lyricpilot .appearance-settings .segment { --segments: 3; }
+#lyricpilot .appearance-settings .segment button { font-size: 12px; }
+#lyricpilot .palette-row { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; gap: 12px; }
+#lyricpilot .palette-options { display: flex; gap: 6px; }
+#lyricpilot .palette-button { width: 30px; height: 30px; padding: 5px; border: 1px solid transparent; background: transparent; border-radius: 50%; display: grid; place-items: center; }
+#lyricpilot .palette-button[aria-pressed="true"] { border-color: var(--lp-accent); }
+#lyricpilot .palette-button::before { content: ''; display: block; width: 18px; height: 18px; border-radius: 50%; background: var(--swatch); }
+#lyricpilot [data-palette-choice="green"] { --swatch: light-dark(#657c51,#bbd3a3); }
+#lyricpilot [data-palette-choice="blue"] { --swatch: light-dark(#547fb9,#a5c7f2); }
+#lyricpilot [data-palette-choice="purple"] { --swatch: light-dark(#956eb7,#d4b6ee); }
+#lyricpilot [data-palette-choice="orange"] { --swatch: light-dark(#b97746,#efbb8e); }
+#lyricpilot .popover-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-size: 13px; }
+#lyricpilot .offset-stepper { display: flex; align-items: center; gap: 4px; padding: 4px; background: var(--lp-tray); border-radius: 8px; }
+#lyricpilot .offset-stepper input { width: 100%; min-width: 0; text-align: center; border: 0; color: var(--lp-ink); background: transparent; font-size: 15px; font-variant-numeric: tabular-nums; appearance: textfield; }
+#lyricpilot .offset-stepper input::-webkit-inner-spin-button { appearance: none; }
+#lyricpilot .offset-note { color: var(--lp-secondary); font-size: 12px; margin-top: 10px; }
+#lyricpilot .pick-top { display: flex; gap: 12px; align-items: center; justify-content: space-between; font-weight: 500; }
+@media (max-width: 780px) {
+}
+@keyframes lp-pop { from { opacity: 0; transform: translateY(-5px) scale(.97); } to { opacity: 1; transform: none; } }
+@media (max-width: 420px) {
+  #lyricpilot .stage { height: 706px; }
+  #lyricpilot .panel-shell { width: calc(100% - 20px); top: 20px; right: 10px; }
+  #lyricpilot .panel { border-radius: 16px; }
+  #lyricpilot .panel-head { padding-left: 19px; }
+  #lyricpilot .brand { left: 19px; }
+  #lyricpilot .is-mini .brand { left: 17px; }
+  #lyricpilot .file-head, #lyricpilot .lyric-list { padding-left: 19px; padding-right: 19px; }
+  #lyricpilot .setup { padding-left: 19px; padding-right: 19px; }
+  #lyricpilot .footer { padding-left: 19px; padding-right: 19px; }
+  #lyricpilot .lyric-list li { font-size: 15px; }
+  #lyricpilot .format-code { font-size: 11px; padding: 14px 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #lyricpilot *, #lyricpilot *::before { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+  #lyricpilot [data-phase="running"] .sweep-text { background: none; color: var(--lp-ink); }
+}
+#lyricpilot[data-initializing] *, #lyricpilot[data-initializing] *::before { transition: none !important; }
+:host { all: initial !important; display: block !important; position: fixed !important; inset: 0 !important; width: auto !important; height: auto !important; z-index: 2147483646 !important; pointer-events: none !important; color-scheme: light dark !important; }
+#lyricpilot { height: 100%; color-scheme: light dark; --lp-height: min(664px,calc(100dvh - 40px)); }
+#lyricpilot button { cursor: pointer; }
+#lyricpilot button:disabled { cursor: not-allowed; }
+#lyricpilot .stage { height: 100%; border: 0; border-radius: 0; overflow: clip; background: transparent; }
+#lyricpilot .panel-shell { height: var(--lp-height); top: 20px; }
+#lyricpilot .panel { height: var(--lp-height); }
+#lyricpilot .panel.is-mini { height: 64px; }
+#lyricpilot .panel-full { height: calc(var(--lp-height) - 2px); }
+#lyricpilot .panel-full, #lyricpilot .more-popover, #lyricpilot .format-sheet { pointer-events: auto; }
+#lyricpilot .is-mini .panel-full { pointer-events: none; }
+#lyricpilot [inert] { pointer-events: none; }
+#lyricpilot .more-popover { max-height: calc(var(--lp-height) - 75px); overflow-y: auto; }
+#lyricpilot .format-sheet { overflow-y: auto; }
+#lyricpilot .pick-banner { position: absolute; top: 20px; left: 50%; transform: translate(-50%,-8px); padding: 10px 12px 10px 18px; display: flex; gap: 18px; align-items: center; border: 1px solid var(--lp-line); border-radius: 12px; background: var(--lp-paper); color: var(--lp-ink); box-shadow: 0 8px 30px var(--lp-shadow); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 180ms, transform 280ms var(--lp-ease),visibility 0s 280ms; white-space: nowrap; }
+#lyricpilot .pick-banner.is-open { opacity: 1; visibility: visible; pointer-events: auto; transform: translate(-50%,0); transition-delay: 0s; }
+#lyricpilot .panel-shell.is-picking { opacity: 0; visibility: hidden; transition: opacity 180ms,visibility 0s 180ms; }
+#lyricpilot .drop-upload:focus-within { outline: 2px solid var(--lp-accent); outline-offset: 4px; border-radius: 5px; }
+#lyricpilot .message { margin: 0; }
+@media (max-height: 560px) {
+  #lyricpilot .panel-full { overflow-y: auto; }
+  #lyricpilot .lyrics-body { min-height: 110px; }
+}
+#lyricpilot .cursor-hint { position: fixed; left: 0; top: 0; z-index: 8; pointer-events: none; visibility: hidden; opacity: 0; transition: opacity 140ms ease, visibility 0s 140ms; }
+#lyricpilot .cursor-hint.is-visible { visibility: visible; opacity: 1; transition-delay: 0s; }
+#lyricpilot .cursor-card { padding: 9px 12px; background: var(--lp-paper); border: 1px solid var(--lp-line); border-radius: 12px; color: var(--lp-ink); box-shadow: 0 5px 20px var(--lp-shadow); transform: translateY(3px); transition: transform 180ms var(--lp-ease), background-color var(--lp-motion), color var(--lp-motion), border-color var(--lp-motion); }
+#lyricpilot .cursor-hint.is-visible .cursor-card { transform: none; }
+#lyricpilot .cursor-label { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+#lyricpilot .cursor-label svg { width: 14px; height: 14px; color: var(--lp-accent); }
+#lyricpilot .cursor-detail { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 180ms var(--lp-ease), opacity 140ms; }
+#lyricpilot .cursor-detail > div { min-height: 0; overflow: hidden; }
+#lyricpilot .cursor-detail span { display: block; padding-top: 4px; font-size: 11px; color: var(--lp-secondary); white-space: nowrap; }
+#lyricpilot .cursor-hint.is-blocked .cursor-detail { grid-template-rows: 1fr; opacity: 1; }
+#lyricpilot .target-retry { color: var(--lp-error); }
+@media (prefers-reduced-motion: reduce) {
+ #lyricpilot .cursor-hint, #lyricpilot .cursor-card, #lyricpilot .cursor-detail { transition-duration: 0s; }
+}
+
+/* The webpage stays visible, but receives no physical pointer hit tests. */
+#lyricpilot .page-input-shield { position:absolute; inset:0; z-index:4; pointer-events:auto; cursor:not-allowed; background:transparent; user-select:none; -webkit-user-select:none; touch-action:none; transition:none; }
+
+/* Header drag area stays clear of settings and the expand control. */
+#lyricpilot .panel-drag { position:absolute; top:0; left:0; right:96px; height:62px; padding:0; border:0; border-radius:19px 0 0 0; background:transparent; z-index:6; cursor:grab; touch-action:none; user-select:none; -webkit-user-select:none; }
+#lyricpilot .is-mini .panel-drag { right:54px; }
+#lyricpilot .panel-drag:focus-visible { outline-offset:-5px; }
+#lyricpilot .panel-shell.is-dragging { transition:none; }
+#lyricpilot .is-dragging .panel-drag { cursor:grabbing; }
+
+/* Parsing diagnostics stay scrollable instead of displacing the action buttons. */
+#lyricpilot .message { max-height:80px; overflow-y:auto; flex-shrink:0; overflow-wrap:anywhere; }

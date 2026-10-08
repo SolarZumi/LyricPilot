@@ -1,0 +1,22 @@
+{
+  "name": "lyricpilot",
+  "version": "0.4.6",
+  "private": true,
+  "description": "Local Chrome lyric-timeline assistant",
+  "scripts": {
+    "test": "node --test tests/*.test.cjs",
+    "check": "node scripts/check.cjs",
+    "build:ui": "node scripts/build-ui.cjs",
+    "build:icons": "node scripts/render-icons.cjs"
+  },
+  "devDependencies": {
+    "sharp": "0.35.4"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SolarZumi/LyricPilot.git"
+  }
+}
