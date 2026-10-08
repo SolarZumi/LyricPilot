@@ -1,6 +1,6 @@
 {
   "name": "lyricpilot",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "private": true,
   "description": "Local Chrome lyric-timeline assistant",
   "scripts": {

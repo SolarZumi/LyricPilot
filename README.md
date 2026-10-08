@@ -49,11 +49,12 @@ start	end	text
 ## 兼容性与隐私
 
 - 扩展点击选定的网页播放按钮，并跟随网页音频的实际进度。
-- 主要支持 HTML audio/video。跨域 iframe、纯 Web Audio 和封闭 Shadow DOM 可能无法使用。
+- 支持 HTML audio/video，以及 DistroKid 歌词同步页面使用的 WaveSurfer 播放器。其他纯 Web Audio 播放器、跨域 iframe 和封闭 Shadow DOM 可能无法使用。
 - 网站可能拒绝脚本生成的输入。“对齐完成”表示操作已发出，请检查网站是否正确记录。
-- 目前完成了本地验证，网易云、QQ 音乐、酷狗和 DistroKid 的当前编辑页面仍需分别实测。
+- 已完成本地验证，包括 DistroKid 同版本的 WaveSurfer 播放进度与按住录入测试；各平台的实际提交结果仍需在网页中确认。
 - 仅使用 `activeTab`、`scripting`、`storage` 权限；点击扩展后访问当前网页。
 - 歌词和音频不上传。没有麦克风权限、分析追踪或远程脚本；外观和位置设置保存在本机。
+- DistroKid 播放进度适配仅在其歌词同步页面启用，读取播放器时间与状态，不读取账号或付款信息。
 
 维护代码请参阅[开发说明](https://github.com/SolarZumi/LyricPilot/blob/main/DEVELOPING.md)。
 

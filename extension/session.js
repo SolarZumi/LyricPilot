@@ -4,6 +4,7 @@
   class Session {
     constructor(onChange, onDocument) {
       this.onChange = onChange; this.onDocument = onDocument; this.phase = 'ready'; this.documents = new Set();
+      this.pageClock = globalThis.LyricPilotPageClock ? new globalThis.LyricPilotPageClock(document) : null;
       this.watch(document);
       this.visibility = () => { if (document.hidden && this.active) this.fail('标签页已隐藏，对齐已停止'); };
       this.blur = () => { if (this.active && this.config?.duration === 'hold') this.fail('页面失去焦点，已释放按住的输入'); };
@@ -19,7 +20,7 @@
       doc.addEventListener('seeking',seek,true); doc.defaultView?.addEventListener('pagehide',hide);
       this.cleanups ||= []; this.cleanups.push(() => {doc.removeEventListener('seeking',seek,true);doc.defaultView?.removeEventListener('pagehide',hide);});
     }
-    discover() { const media = A.discoverMedia(document); media.forEach(m => this.watch(m.document)); return media; }
+    discover() { const media = [...A.discoverMedia(document), ...(this.pageClock?.discover() || [])]; media.forEach(m => this.watch(m.document)); return media; }
     emit(phase,message = '') { this.phase = phase; this.onChange({phase,message}); }
     release() { const controller = this.controller; this.controller = null; try { controller?.destroy(); } catch (_) {} }
     clear() { clearInterval(this.interval); cancelAnimationFrame(this.frame); this.interval = this.frame = null; }
@@ -27,6 +28,7 @@
       this.ending = true; this.waiting = null; this.resuming = false; this.clear();
       if (this.runner && ['armed','running','paused'].includes(this.runner.status)) this.runner.stop('manual');
       this.release(); if (this.audio && !this.audio.paused) this.audio.pause();
+      this.pageClock?.destroy();
       this.runner = null; this.audio = null; this.ending = false;
       if (!silent) this.emit('ready',message); else this.phase = 'ready';
     }
@@ -61,12 +63,12 @@
       catch (e) { this.fail(e); }
     }
     attach(audio) {
-      this.audio = audio; this.src = audio.currentSrc; this.waiting = null;
+      this.audio = audio; this.src = audio.currentSrc; this.seekSerial = audio.seekSerial; this.waiting = null;
       if (this.config.kind !== 'button' || this.config.duration === 'hold') this.controller = this.makeController();
       this.runner = new C.TimingRunner({events:this.schedule.events,maxLateMs:180,
         readClock:() => {
           if (!audio.isConnected || (this.src && audio.currentSrc !== this.src)) throw new Error('音频已更换');
-          return {time:audio.currentTime,paused:audio.paused,seeking:audio.seeking,ended:audio.ended,playbackRate:audio.playbackRate};
+          return {time:audio.currentTime,paused:audio.paused,seeking:audio.seeking || audio.seekSerial !== this.seekSerial,ended:audio.ended,playbackRate:audio.playbackRate};
         },
         onEvent:e => {
           if (e.type !== 'keyup') this.onChange({index:e.cueIndex});
@@ -92,13 +94,15 @@
     pause() {
       if (!this.active) return;
       if (!this.runner || !this.audio) { this.stop('已取消等待播放'); return; }
+      this.pageClock?.refresh();
       this.clear(); this.resuming = false; this.pausedAt = this.audio.currentTime;
       const partial = this.runner.pause(); this.audio.pause();
       this.emit('paused',partial ? '当前句已提前松开，继续时从下一句开始' : '');
     }
     resume() {
       if (this.phase !== 'paused') return;
-      if (!this.audio?.isConnected || (this.src && this.audio.currentSrc !== this.src) || Math.abs(this.audio.currentTime-this.pausedAt)>.18) {
+      this.pageClock?.refresh();
+      if (!this.audio?.isConnected || (this.src && this.audio.currentSrc !== this.src) || this.audio.seekSerial !== this.seekSerial || Math.abs(this.audio.currentTime-this.pausedAt)>.18) {
         this.fail('暂停后播放位置已改变，请在网页复位后重新开始'); return;
       }
       if (this.runner.cursor >= this.runner.events.length) { this.release(); this.emit('done'); return; }
@@ -115,8 +119,9 @@
       try {
         if (document.hidden) { this.fail('标签页已隐藏，对齐已停止'); return; }
         const now = performance.now();
+        this.pageClock?.refresh();
         if (this.resuming) {
-          if (!this.audio?.isConnected || (this.src && this.audio.currentSrc !== this.src) || this.audio.currentTime < this.pausedAt-.03) throw new Error('网页播放按钮重置了进度，请在网页复位后重新开始');
+          if (!this.audio?.isConnected || (this.src && this.audio.currentSrc !== this.src) || this.audio.seekSerial !== this.seekSerial || this.audio.currentTime < this.pausedAt-.03) throw new Error('网页播放按钮重置了进度，请在网页复位后重新开始');
           if (!this.audio.paused && !this.audio.seeking) { this.resuming = false; this.runner.resume(); }
           else if (now >= this.resumeDeadline) throw new Error('网页没有继续播放，请检查播放按钮');
           else return;
